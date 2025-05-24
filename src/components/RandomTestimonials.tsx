@@ -1,194 +1,252 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { getRandomItems } from '@/lib/randomUtils';
+import { useState, useEffect } from 'react';
+import { Quote } from 'lucide-react';
+import { LayoutType, Testimonial } from '../lib/randomUtils';
 
-interface Testimonial {
-  quote: string;
-  author: string;
-  role: string;
-  company: string;
-}
-
-interface RandomTestimonialsProps {
-  colorScheme: {
+type RandomTestimonialsProps = {
+  testimonials: Testimonial[];
+  colorPalette: {
     primary: string;
     secondary: string;
     accent: string;
-    neutral: string;
-    button: string;
+    background: string;
+    text: string;
   };
-  font: string;
-}
+  layout: LayoutType;
+  fontHeading: string;
+  fontBody: string;
+};
 
-// Random testimonials
-const testimonials = [
-  {
-    quote: 'This product has completely revolutionized how we operate. The ROI has been incredible.',
-    author: 'Sarah Johnson',
-    role: 'CEO',
-    company: 'Techwave',
-  },
-  {
-    quote: 'The intuitive interface and powerful features make this an essential tool for our team\'s daily workflow.',
-    author: 'Michael Chen',
-    role: 'Product Director',
-    company: 'InnovateCorp',
-  },
-  {
-    quote: 'We\'ve seen a 40% increase in productivity since implementing this solution across our organization.',
-    author: 'Emily Rodriguez',
-    role: 'Operations Manager',
-    company: 'GlobalTech',
-  },
-  {
-    quote: 'The support team has been exceptional. They go above and beyond to ensure our success.',
-    author: 'David Kim',
-    role: 'CTO',
-    company: 'NextGen Solutions',
-  },
-  {
-    quote: 'This platform offers the perfect balance of power and simplicity. It\'s been a game-changer for our team.',
-    author: 'Lisa Wong',
-    role: 'Marketing Director',
-    company: 'Elevation Media',
-  },
-];
-
-export function RandomTestimonials({ colorScheme, font }: RandomTestimonialsProps) {
-  const [testimonialStyle] = useState<number>(Math.floor(Math.random() * 3));
-  const [randomTestimonials] = useState<Testimonial[]>(
-    getRandomItems(testimonials, Math.floor(Math.random() * 2) + 2)
-  );
+export default function RandomTestimonials({
+  testimonials,
+  colorPalette,
+  layout,
+  fontHeading,
+  fontBody
+}: RandomTestimonialsProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
   
-  // Different testimonial layouts
-  const renderTestimonialStyle0 = () => (
-    <section className={cn("w-full py-16", font, colorScheme.neutral)}>
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
-          <p className="text-lg mb-0 max-w-2xl mx-auto">
-            Don't just take our word for it. See what our users have to say.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {randomTestimonials.map((testimonial, index) => (
-            <motion.div 
-              key={index}
-              className={cn("p-6 rounded-lg", colorScheme.secondary)}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+  // Auto-rotate testimonials
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % testimonials.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+  
+  // Generate section style based on layout
+  const getSectionStyle = () => {
+    if (layout === 'fullWidth' || layout === 'cards') {
+      // Use a gradient background for these layouts
+      return {
+        background: `linear-gradient(135deg, ${colorPalette.primary} 0%, ${colorPalette.accent} 100%)`,
+        color: '#fff',
+      };
+    }
+    
+    if (layout === 'split' || layout === 'asymmetric') {
+      // Use a light background for these layouts
+      return {
+        backgroundColor: '#fff',
+        color: colorPalette.text,
+      };
+    }
+    
+    return {
+      backgroundColor: colorPalette.background,
+      color: colorPalette.text,
+    };
+  };
+  
+  // Render different testimonial layouts
+  const renderTestimonialLayout = () => {
+    switch (layout) {
+      case 'centered':
+      case 'cards':
+        return (
+          <div className="max-w-3xl mx-auto mt-12">
+            <div 
+              className="p-8 md:p-12 rounded-lg shadow-lg relative overflow-hidden"
+              style={{
+                backgroundColor: layout === 'cards' ? 'rgba(255, 255, 255, 0.1)' : '#fff',
+                color: layout === 'cards' ? '#fff' : colorPalette.text,
+                backdropFilter: layout === 'cards' ? 'blur(10px)' : 'none',
+              }}
             >
-              <div className="mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                  <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                </svg>
-              </div>
-              <p className="text-lg mb-4">{testimonial.quote}</p>
-              <div className="flex items-center">
-                <div className={cn("w-10 h-10 rounded-full mr-3", colorScheme.accent)}></div>
-                <div>
-                  <div className="font-bold">{testimonial.author}</div>
-                  <div className="text-sm">{testimonial.role}, {testimonial.company}</div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderTestimonialStyle1 = () => (
-    <section className={cn("w-full py-16", font, colorScheme.primary)}>
-      <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
-            <p className="text-lg mb-0 max-w-2xl mx-auto">
-              Don't just take our word for it. See what our users have to say.
-            </p>
-          </div>
-          
-          <div className="space-y-8">
-            {randomTestimonials.map((testimonial, index) => (
-              <motion.div 
-                key={index}
-                className={cn("p-6 rounded-lg", colorScheme.neutral)}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div className="flex flex-col md:flex-row gap-6">
-                  <div className="md:w-1/4 flex flex-col items-center md:items-start">
-                    <div className={cn("w-16 h-16 rounded-full mb-3", colorScheme.accent)}></div>
-                    <div className="text-center md:text-left">
-                      <div className="font-bold">{testimonial.author}</div>
-                      <div className="text-sm">{testimonial.role}</div>
-                      <div className="text-sm">{testimonial.company}</div>
+              <Quote 
+                size={48} 
+                className="absolute top-6 left-6 opacity-20" 
+                style={{ color: layout === 'cards' ? '#fff' : colorPalette.primary }}
+              />
+              
+              <div className="relative z-10">
+                {testimonials.map((testimonial, index) => (
+                  <div 
+                    key={index}
+                    className={`transition-opacity duration-500 ${activeIndex === index ? 'opacity-100' : 'opacity-0 absolute top-0 left-0'}`}
+                  >
+                    <p 
+                      className="text-xl md:text-2xl mb-8 text-center"
+                      style={{ fontFamily: fontBody }}
+                    >
+                      "{testimonial.quote}"
+                    </p>
+                    <div className="text-center">
+                      <p 
+                        className="font-semibold"
+                        style={{ fontFamily: fontHeading }}
+                      >
+                        {testimonial.author}
+                      </p>
+                      <p 
+                        className="opacity-80 text-sm"
+                        style={{ fontFamily: fontBody }}
+                      >
+                        {testimonial.role}, {testimonial.company}
+                      </p>
                     </div>
                   </div>
-                  <div className="md:w-3/4">
-                    <div className="mb-4">
-                      <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                        <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                      </svg>
-                    </div>
-                    <p className="text-lg">{testimonial.quote}</p>
-                  </div>
+                ))}
+              </div>
+              
+              {testimonials.length > 1 && (
+                <div className="flex justify-center mt-8 space-x-2">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-colors duration-300 ${activeIndex === index ? 'bg-current' : 'bg-current opacity-30'}`}
+                      onClick={() => setActiveIndex(index)}
+                      aria-label={`Testimonial ${index + 1}`}
+                    />
+                  ))}
                 </div>
-              </motion.div>
-            ))}
+              )}
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderTestimonialStyle2 = () => (
-    <section className={cn("w-full py-16", font, colorScheme.secondary)}>
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row gap-12 items-center">
-          <div className="md:w-1/3">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
-            <p className="text-lg mb-6">
-              Don't just take our word for it. See what our users have to say about their experience with our platform.
-            </p>
-            <button className={cn("px-6 py-3 rounded-lg", colorScheme.button)}>
-              Read More Stories
-            </button>
-          </div>
-          
-          <div className="md:w-2/3">
-            <div className="grid grid-cols-1 gap-6">
-              {randomTestimonials.map((testimonial, index) => (
-                <motion.div 
+        );
+        
+      case 'split':
+      case 'fullWidth':
+        return (
+          <div className="mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <div 
                   key={index}
-                  className={cn("p-6 rounded-lg", colorScheme.neutral)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="p-6 rounded-lg shadow-md h-full flex flex-col"
+                  style={{
+                    backgroundColor: layout === 'fullWidth' ? 'rgba(255, 255, 255, 0.1)' : '#fff',
+                    color: layout === 'fullWidth' ? '#fff' : colorPalette.text,
+                    backdropFilter: layout === 'fullWidth' ? 'blur(10px)' : 'none',
+                  }}
                 >
-                  <div className="flex items-center mb-4">
-                    <div className={cn("w-12 h-12 rounded-full mr-4", colorScheme.accent)}></div>
-                    <div>
-                      <div className="font-bold">{testimonial.author}</div>
-                      <div className="text-sm">{testimonial.role}, {testimonial.company}</div>
-                    </div>
+                  <Quote 
+                    size={32} 
+                    className="mb-4 opacity-70" 
+                    style={{ color: layout === 'fullWidth' ? '#fff' : colorPalette.primary }}
+                  />
+                  <p 
+                    className="text-lg flex-grow mb-6"
+                    style={{ fontFamily: fontBody }}
+                  >
+                    "{testimonial.quote}"
+                  </p>
+                  <div>
+                    <p 
+                      className="font-semibold"
+                      style={{ fontFamily: fontHeading }}
+                    >
+                      {testimonial.author}
+                    </p>
+                    <p 
+                      className="opacity-80 text-sm"
+                      style={{ fontFamily: fontBody }}
+                    >
+                      {testimonial.role}, {testimonial.company}
+                    </p>
                   </div>
-                  <p className="text-lg">{testimonial.quote}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
+        );
+        
+      case 'asymmetric':
+        return (
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index}
+                className={`p-6 rounded-lg shadow-md flex gap-6 ${index % 2 === 1 ? 'md:translate-y-8' : ''}`}
+              >
+                <div 
+                  className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full"
+                  style={{ 
+                    backgroundColor: colorPalette.primary,
+                    color: '#fff'
+                  }}
+                >
+                  <Quote size={20} />
+                </div>
+                <div>
+                  <p 
+                    className="text-lg mb-4"
+                    style={{ fontFamily: fontBody }}
+                  >
+                    "{testimonial.quote}"
+                  </p>
+                  <p 
+                    className="font-semibold"
+                    style={{ fontFamily: fontHeading }}
+                  >
+                    {testimonial.author}
+                  </p>
+                  <p 
+                    className="opacity-80 text-sm"
+                    style={{ fontFamily: fontBody }}
+                  >
+                    {testimonial.role}, {testimonial.company}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
+  
+  return (
+    <section 
+      id="testimonials"
+      className="py-20 md:py-32"
+      style={getSectionStyle()}
+    >
+      <div className="container mx-auto px-6">
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 
+            className="text-3xl md:text-4xl font-bold mb-4"
+            style={{ 
+              fontFamily: fontHeading,
+              color: layout === 'fullWidth' || layout === 'cards' ? '#fff' : colorPalette.primary 
+            }}
+          >
+            What Our Clients Say
+          </h2>
+          <p 
+            className={`text-lg md:text-xl ${layout === 'fullWidth' || layout === 'cards' ? 'opacity-90' : 'opacity-80'}`}
+            style={{ fontFamily: fontBody }}
+          >
+            Hear from those who have experienced our services
+          </p>
         </div>
+        
+        {renderTestimonialLayout()}
       </div>
     </section>
   );
-
-  // Render the random testimonial style
-  const testimonialStyles = [renderTestimonialStyle0, renderTestimonialStyle1, renderTestimonialStyle2];
-  return testimonialStyles[testimonialStyle]();
 }
