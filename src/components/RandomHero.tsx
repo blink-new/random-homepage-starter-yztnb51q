@@ -1,284 +1,311 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { ArrowRight } from 'lucide-react';
+import { LayoutType } from '../lib/randomUtils';
 
-interface RandomHeroProps {
-  colorScheme: {
+type RandomHeroProps = {
+  companyName: string;
+  tagline: string;
+  colorPalette: {
     primary: string;
     secondary: string;
     accent: string;
-    neutral: string;
-    button: string;
+    background: string;
+    text: string;
   };
-  headline: string;
-  subheadline: string;
+  layout: LayoutType;
+  heroImage: string;
   cta: string;
-  heroType: string;
-  font: string;
-}
+  fontHeading: string;
+  fontBody: string;
+};
 
-export function RandomHero({ 
-  colorScheme, 
-  headline, 
-  subheadline, 
-  cta, 
-  heroType, 
-  font 
+export default function RandomHero({
+  companyName,
+  tagline,
+  colorPalette,
+  layout,
+  heroImage,
+  cta,
+  fontHeading,
+  fontBody
 }: RandomHeroProps) {
-  const [heroStyle] = useState<number>(Math.floor(Math.random() * 3));
   
-  // Random background patterns
-  const patterns = [
-    'bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-100 to-slate-100',
-    'bg-[linear-gradient(to_right,_#f0f0f0,_#f8f8f8)]',
-    'bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-100 via-slate-100 to-slate-100',
-    'bg-gradient-to-br from-slate-100 to-blue-50',
-    'bg-gradient-to-r from-rose-50 to-slate-50',
-  ];
-  
-  const [pattern, setPattern] = useState<string>('');
-  
-  useEffect(() => {
-    if (heroType === 'with-pattern') {
-      const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
-      setPattern(randomPattern);
+  // Generate style based on layout type
+  const heroStyle = (() => {
+    // For split and asymmetric layouts, use an image background
+    if (layout === 'split' || layout === 'asymmetric') {
+      return {};
     }
-  }, [heroType]);
-  
-  // Random hero image
-  const heroImages = [
-    'https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=2274&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop',
-  ];
-  
-  const [heroImage, setHeroImage] = useState<string>('');
-  
-  useEffect(() => {
-    if (heroType === 'with-image') {
-      const randomImage = heroImages[Math.floor(Math.random() * heroImages.length)];
-      setHeroImage(randomImage);
+    
+    // For full width layouts, use a gradient or image background
+    if (layout === 'fullWidth') {
+      const useGradient = Math.random() > 0.5;
+      
+      if (useGradient) {
+        return {
+          backgroundImage: `linear-gradient(135deg, ${colorPalette.primary} 0%, ${colorPalette.accent} 100%)`,
+          color: '#ffffff',
+        };
+      } else {
+        return {
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${heroImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#ffffff',
+        };
+      }
     }
-  }, [heroType]);
-
-  // Different hero layouts
-  const renderHeroStyle0 = () => (
-    <section className={cn(
-      "w-full py-12 md:py-24", 
-      font,
-      heroType === 'with-pattern' ? pattern : '',
-      heroType === 'simple' ? colorScheme.secondary : ''
-    )}>
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          <motion.h1 
-            className={cn("text-4xl md:text-5xl lg:text-6xl font-bold mb-6", 
-              heroType === 'simple' ? '' : 'text-slate-900'
-            )}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {headline}
-          </motion.h1>
-          <motion.p 
-            className={cn("text-xl md:text-2xl mb-8", 
-              heroType === 'simple' ? '' : 'text-slate-700'
-            )}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            {subheadline}
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <button className={cn("px-6 py-3 rounded-lg text-lg", colorScheme.button)}>
-              {cta}
-            </button>
-          </motion.div>
-          
-          {heroType === 'with-image' && (
-            <motion.div 
-              className="mt-12 w-full max-w-4xl"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
+    
+    // For other layouts, use a solid background
+    return {
+      backgroundColor: colorPalette.background,
+      color: colorPalette.text,
+    };
+  })();
+  
+  // Render different layouts
+  const renderHeroContent = () => {
+    switch (layout) {
+      case 'centered':
+        return (
+          <div className="container mx-auto px-6 py-20 md:py-32 text-center">
+            <h1 
+              className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in"
+              style={{ fontFamily: fontHeading }}
             >
-              <img 
-                src={heroImage} 
-                alt="Hero" 
-                className="w-full h-auto rounded-lg shadow-xl"
-              />
-            </motion.div>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderHeroStyle1 = () => (
-    <section className={cn(
-      "w-full py-12 md:py-24", 
-      font,
-      heroType === 'with-pattern' ? pattern : '',
-      heroType === 'simple' ? colorScheme.primary : ''
-    )}>
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          <div className="flex-1">
-            <motion.h1 
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+              {companyName}
+            </h1>
+            <p 
+              className="text-xl md:text-2xl max-w-2xl mx-auto mb-10 animate-slide-up opacity-90"
+              style={{ fontFamily: fontBody }}
             >
-              {headline}
-            </motion.h1>
-            <motion.p 
-              className="text-xl md:text-2xl mb-8"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              {subheadline}
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <button className={cn("px-6 py-3 rounded-lg text-lg", colorScheme.button)}>
-                {cta}
+              {tagline}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <button 
+                className="px-6 py-3 rounded-md font-medium flex items-center gap-2 transition-all duration-300"
+                style={{ 
+                  backgroundColor: colorPalette.primary,
+                  color: '#fff',
+                  fontFamily: fontBody
+                }}
+              >
+                {cta} <ArrowRight size={16} />
               </button>
-            </motion.div>
-          </div>
-          
-          {heroType === 'with-image' ? (
-            <motion.div 
-              className="flex-1"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-            >
-              <img 
-                src={heroImage} 
-                alt="Hero" 
-                className="w-full h-auto rounded-lg shadow-xl"
-              />
-            </motion.div>
-          ) : (
-            <motion.div 
-              className={cn("flex-1 rounded-lg p-8", colorScheme.accent)}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-            >
-              <div className="aspect-video flex items-center justify-center">
-                <div className="text-4xl font-bold">
-                  {heroType === 'simple' ? '✨' : '🚀'}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderHeroStyle2 = () => (
-    <section className={cn(
-      "w-full min-h-[80vh] flex items-center", 
-      font,
-      heroType === 'with-pattern' ? pattern : '',
-      heroType === 'simple' ? colorScheme.neutral : ''
-    )}>
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-12 gap-12">
-          <div className="md:col-span-7 lg:col-span-6 flex flex-col justify-center">
-            <motion.div
-              className={cn("inline-block px-4 py-1 rounded-full text-sm font-medium mb-4", colorScheme.accent)}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              Introducing Our Platform
-            </motion.div>
-            <motion.h1 
-              className={cn("text-4xl md:text-5xl lg:text-6xl font-bold mb-6", 
-                heroType === 'simple' ? 'text-slate-900' : 'text-slate-900'
-              )}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              {headline}
-            </motion.h1>
-            <motion.p 
-              className={cn("text-xl mb-8", 
-                heroType === 'simple' ? 'text-slate-700' : 'text-slate-700'
-              )}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              {subheadline}
-            </motion.p>
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <button className={cn("px-6 py-3 rounded-lg text-lg", colorScheme.button)}>
-                {cta}
-              </button>
-              <button className="px-6 py-3 rounded-lg text-lg border border-slate-300 hover:bg-slate-100 transition-colors">
+              <button 
+                className="px-6 py-3 rounded-md font-medium transition-all duration-300"
+                style={{ 
+                  backgroundColor: 'transparent',
+                  color: layout === 'fullWidth' ? '#fff' : colorPalette.text,
+                  border: `2px solid ${layout === 'fullWidth' ? '#fff' : colorPalette.primary}`,
+                  fontFamily: fontBody
+                }}
+              >
                 Learn More
               </button>
-            </motion.div>
+            </div>
           </div>
-          
-          <div className="md:col-span-5 lg:col-span-6 flex items-center">
-            {heroType === 'with-image' ? (
-              <motion.div 
-                className="w-full"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-              >
-                <img 
-                  src={heroImage} 
-                  alt="Hero" 
-                  className="w-full h-auto rounded-lg shadow-xl"
-                />
-              </motion.div>
-            ) : (
-              <motion.div 
-                className={cn("w-full rounded-lg p-8 aspect-square flex items-center justify-center", 
-                  colorScheme.secondary
-                )}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-              >
-                <div className="text-6xl">
-                  {heroType === 'simple' ? '✨' : '🚀'}
+        );
+        
+      case 'split':
+        return (
+          <div className="flex flex-col md:flex-row h-screen">
+            <div 
+              className="w-full md:w-1/2 px-6 md:px-12 flex items-center justify-center bg-opacity-90"
+              style={{ 
+                backgroundColor: colorPalette.background,
+                color: colorPalette.text 
+              }}
+            >
+              <div className="py-20 md:py-0 max-w-md">
+                <h1 
+                  className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in"
+                  style={{ fontFamily: fontHeading }}
+                >
+                  {companyName}
+                </h1>
+                <p 
+                  className="text-xl mb-10 animate-slide-up opacity-90"
+                  style={{ fontFamily: fontBody }}
+                >
+                  {tagline}
+                </p>
+                <button 
+                  className="px-6 py-3 rounded-md font-medium flex items-center gap-2 transition-all duration-300"
+                  style={{ 
+                    backgroundColor: colorPalette.primary,
+                    color: '#fff',
+                    fontFamily: fontBody
+                  }}
+                >
+                  {cta} <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+            <div 
+              className="w-full md:w-1/2 bg-cover bg-center h-64 md:h-auto"
+              style={{ backgroundImage: `url(${heroImage})` }}
+            />
+          </div>
+        );
+        
+      case 'asymmetric':
+        return (
+          <div className="container mx-auto px-6 py-20 md:py-32">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="w-full md:w-7/12 pr-0 md:pr-12 mb-12 md:mb-0">
+                <h1 
+                  className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in"
+                  style={{ 
+                    fontFamily: fontHeading,
+                    color: colorPalette.primary 
+                  }}
+                >
+                  {companyName}
+                </h1>
+                <p 
+                  className="text-xl mb-10 animate-slide-up opacity-90"
+                  style={{ fontFamily: fontBody }}
+                >
+                  {tagline}
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <button 
+                    className="px-6 py-3 rounded-md font-medium flex items-center gap-2 transition-all duration-300"
+                    style={{ 
+                      backgroundColor: colorPalette.primary,
+                      color: '#fff',
+                      fontFamily: fontBody
+                    }}
+                  >
+                    {cta} <ArrowRight size={16} />
+                  </button>
+                  <button 
+                    className="px-6 py-3 rounded-md font-medium transition-all duration-300"
+                    style={{ 
+                      backgroundColor: 'transparent',
+                      color: colorPalette.text,
+                      border: `2px solid ${colorPalette.primary}`,
+                      fontFamily: fontBody
+                    }}
+                  >
+                    Learn More
+                  </button>
                 </div>
-              </motion.div>
-            )}
+              </div>
+              <div className="w-full md:w-5/12">
+                <div 
+                  className="rounded-lg overflow-hidden shadow-xl h-64 md:h-96 bg-cover bg-center transform transition-transform hover:scale-105 duration-500"
+                  style={{ backgroundImage: `url(${heroImage})` }}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        );
+        
+      case 'fullWidth':
+        return (
+          <div className="w-full px-6 md:px-16 py-32 md:py-48 flex items-center justify-center text-center">
+            <div className="max-w-3xl">
+              <h1 
+                className="text-4xl md:text-7xl font-bold mb-6 animate-fade-in"
+                style={{ fontFamily: fontHeading }}
+              >
+                {companyName}
+              </h1>
+              <p 
+                className="text-xl md:text-2xl mb-10 animate-slide-up opacity-90"
+                style={{ fontFamily: fontBody }}
+              >
+                {tagline}
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <button 
+                  className="px-8 py-4 rounded-md font-medium flex items-center gap-2 transition-all duration-300"
+                  style={{ 
+                    backgroundColor: '#ffffff',
+                    color: colorPalette.primary,
+                    fontFamily: fontBody
+                  }}
+                >
+                  {cta} <ArrowRight size={16} />
+                </button>
+                <button 
+                  className="px-8 py-4 rounded-md font-medium transition-all duration-300"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    border: '2px solid #ffffff',
+                    fontFamily: fontBody
+                  }}
+                >
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'cards':
+        return (
+          <div className="container mx-auto px-6 py-20 md:py-32">
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <div 
+                className="w-full md:w-1/2 rounded-xl p-10 shadow-xl"
+                style={{ backgroundColor: colorPalette.background }}
+              >
+                <h1 
+                  className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in"
+                  style={{ 
+                    fontFamily: fontHeading,
+                    color: colorPalette.primary 
+                  }}
+                >
+                  {companyName}
+                </h1>
+                <p 
+                  className="text-xl mb-10 animate-slide-up opacity-90"
+                  style={{ fontFamily: fontBody }}
+                >
+                  {tagline}
+                </p>
+                <button 
+                  className="px-6 py-3 rounded-md font-medium flex items-center gap-2 transition-all duration-300"
+                  style={{ 
+                    backgroundColor: colorPalette.primary,
+                    color: '#fff',
+                    fontFamily: fontBody
+                  }}
+                >
+                  {cta} <ArrowRight size={16} />
+                </button>
+              </div>
+              <div className="w-full md:w-1/2 grid grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map((item) => (
+                  <div 
+                    key={item}
+                    className="aspect-square rounded-lg overflow-hidden bg-cover bg-center shadow-lg transform transition-transform hover:scale-105 duration-300"
+                    style={{
+                      backgroundImage: `url(https://source.unsplash.com/random/300x300?sig=${item})`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
+  
+  return (
+    <section 
+      id="home"
+      className="min-h-screen w-full flex items-center justify-center pt-16"
+      style={heroStyle}
+    >
+      {renderHeroContent()}
     </section>
   );
-
-  // Render the random hero style
-  const heroStyles = [renderHeroStyle0, renderHeroStyle1, renderHeroStyle2];
-  return heroStyles[heroStyle]();
 }
