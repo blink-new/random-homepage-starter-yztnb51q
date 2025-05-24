@@ -1,39 +1,28 @@
-import { LayoutType, Feature } from '../lib/randomUtils';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
 
-type RandomFeaturesProps = {
-  features: Feature[];
-  colorPalette: {
+interface Feature {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+interface RandomFeaturesProps {
+  colorScheme: {
     primary: string;
     secondary: string;
     accent: string;
-    background: string;
-    text: string;
+    neutral: string;
+    button: string;
   };
-  layout: LayoutType;
-  fontHeading: string;
-  fontBody: string;
-};
+  featureList: Feature[];
+  font: string;
+}
 
-export default function RandomFeatures({
-  features,
-  colorPalette,
-  layout,
-  fontHeading,
-  fontBody
-}: RandomFeaturesProps) {
-  
-  // Dynamically render icons from Lucide
-  const renderIcon = (iconName: string) => {
-    const capitalizedIconName = iconName.charAt(0).toUpperCase() + iconName.slice(1);
-    const Icon = LucideIcons[capitalizedIconName as keyof typeof LucideIcons];
-    
-    if (!Icon) {
-      return null;
-    }
-    
-    return <Icon size={24} />;
-  };
+export function RandomFeatures({ colorScheme, featureList, font }: RandomFeaturesProps) {
+  const [featureStyle] = useState<number>(Math.floor(Math.random() * 3));
   
   // Helper function to get Lucide icon
   const getIcon = (iconName: string) => {
@@ -43,162 +32,115 @@ export default function RandomFeatures({
     }
     return <LucideIcons.Star size={24} />;
   };
-  
-  // Generate section style based on layout
-  const getSectionStyle = () => {
-    if (layout === 'split' || layout === 'asymmetric') {
-      // Use a light background for these layouts
-      return {
-        backgroundColor: '#f9fafb', // Light gray
-        color: colorPalette.text,
-      };
-    }
-    
-    return {
-      backgroundColor: colorPalette.background,
-      color: colorPalette.text,
-    };
-  };
-  
-  // Render different feature layouts
-  const renderFeatureLayout = () => {
-    switch (layout) {
-      case 'centered':
-      case 'fullWidth':
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            {features.map((feature, index) => (
-              <div 
-                key={index}
-                className="p-6 rounded-lg text-center transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1"
-              >
-                <div 
-                  className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full"
-                  style={{ 
-                    backgroundColor: colorPalette.primary,
-                    color: '#fff'
-                  }}
-                >
-                  {getIcon(feature.icon)}
-                </div>
-                <h3 
-                  className="text-xl font-semibold mb-3"
-                  style={{ fontFamily: fontHeading }}
-                >
-                  {feature.title}
-                </h3>
-                <p 
-                  className="opacity-80"
-                  style={{ fontFamily: fontBody }}
-                >
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        );
-        
-      case 'split':
-      case 'asymmetric':
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
-            {features.map((feature, index) => (
-              <div 
-                key={index}
-                className="p-6 rounded-lg flex items-start gap-5 transition-all duration-300 hover:shadow-lg"
-              >
-                <div 
-                  className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-md"
-                  style={{ 
-                    backgroundColor: colorPalette.primary,
-                    color: '#fff'
-                  }}
-                >
-                  {getIcon(feature.icon)}
-                </div>
-                <div>
-                  <h3 
-                    className="text-xl font-semibold mb-2"
-                    style={{ fontFamily: fontHeading }}
-                  >
-                    {feature.title}
-                  </h3>
-                  <p 
-                    className="opacity-80"
-                    style={{ fontFamily: fontBody }}
-                  >
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        );
-        
-      case 'cards':
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-            {features.map((feature, index) => (
-              <div 
-                key={index}
-                className="p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1"
-                style={{ 
-                  backgroundColor: index % 2 === 0 ? colorPalette.primary : '#fff',
-                  color: index % 2 === 0 ? '#fff' : colorPalette.text
-                }}
-              >
-                <div className="mb-4">
-                  {getIcon(feature.icon)}
-                </div>
-                <h3 
-                  className="text-xl font-semibold mb-3"
-                  style={{ fontFamily: fontHeading }}
-                >
-                  {feature.title}
-                </h3>
-                <p 
-                  className={index % 2 === 0 ? 'opacity-90' : 'opacity-80'}
-                  style={{ fontFamily: fontBody }}
-                >
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        );
-        
-      default:
-        return null;
-    }
-  };
-  
-  return (
-    <section 
-      id="features"
-      className="py-20 md:py-32"
-      style={getSectionStyle()}
-    >
-      <div className="container mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 
-            className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ 
-              fontFamily: fontHeading,
-              color: colorPalette.primary 
-            }}
-          >
-            Key Features
-          </h2>
-          <p 
-            className="text-lg md:text-xl opacity-80"
-            style={{ fontFamily: fontBody }}
-          >
-            Discover the powerful capabilities that set us apart
+
+  // Different feature layouts
+  const renderFeatureStyle0 = () => (
+    <section className={cn("w-full py-16", font, colorScheme.neutral)}>
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Features</h2>
+          <p className="text-lg mb-0 max-w-2xl mx-auto">
+            Discover the tools and features that make our platform unique.
           </p>
         </div>
         
-        {renderFeatureLayout()}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featureList.map((feature, index) => (
+            <motion.div 
+              key={index}
+              className={cn("p-6 rounded-lg", colorScheme.secondary)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-4", colorScheme.accent)}>
+                {getIcon(feature.icon)}
+              </div>
+              <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+              <p className="text-base">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
+
+  const renderFeatureStyle1 = () => (
+    <section className={cn("w-full py-16", font, colorScheme.neutral)}>
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row gap-12">
+          <div className="md:w-1/3">
+            <div className="sticky top-24">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Features</h2>
+              <p className="text-lg mb-6">
+                Discover the tools and features that make our platform unique.
+              </p>
+              <button className={cn("px-6 py-3 rounded-lg", colorScheme.button)}>
+                Learn More
+              </button>
+            </div>
+          </div>
+          <div className="md:w-2/3">
+            <div className="space-y-8">
+              {featureList.map((feature, index) => (
+                <motion.div 
+                  key={index}
+                  className="flex gap-6"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <div className={cn("w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center", colorScheme.accent)}>
+                    {getIcon(feature.icon)}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                    <p className="text-base">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderFeatureStyle2 = () => (
+    <section className={cn("w-full py-16", font, colorScheme.primary)}>
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Features</h2>
+          <p className="text-lg mb-0 max-w-2xl mx-auto">
+            Discover the tools and features that make our platform unique.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featureList.map((feature, index) => (
+            <motion.div 
+              key={index}
+              className={cn("p-6 rounded-lg", colorScheme.neutral)}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            >
+              <div className="flex items-center mb-4">
+                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center mr-3", colorScheme.accent)}>
+                  {getIcon(feature.icon)}
+                </div>
+                <h3 className="text-xl font-bold">{feature.title}</h3>
+              </div>
+              <p className="text-base">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
+  // Render the random feature style
+  const featureStyles = [renderFeatureStyle0, renderFeatureStyle1, renderFeatureStyle2];
+  return featureStyles[featureStyle]();
 }
