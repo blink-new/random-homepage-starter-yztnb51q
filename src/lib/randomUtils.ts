@@ -1,191 +1,180 @@
-// Utility functions for generating random homepage elements
+// Random color palettes
+export type ColorPalette = {
+  primary: string;
+  secondary: string;
+  accent: string;
+  background: string;
+  text: string;
+};
 
-// Random color schemes (tailwind class combinations)
-export const colorSchemes = [
+export const colorPalettes: ColorPalette[] = [
+  // Modern and clean
   {
-    primary: 'bg-blue-500 text-white',
-    secondary: 'bg-blue-100 text-blue-900',
-    accent: 'bg-yellow-400 text-blue-900',
-    neutral: 'bg-slate-100 text-slate-900',
-    button: 'bg-blue-600 hover:bg-blue-700 text-white',
-    name: 'Blue Ocean',
+    primary: '#3B82F6', // blue-500
+    secondary: '#10B981', // emerald-500
+    accent: '#8B5CF6', // violet-500
+    background: '#F9FAFB', // gray-50
+    text: '#1F2937', // gray-800
   },
+  // Earthy tones
   {
-    primary: 'bg-purple-600 text-white',
-    secondary: 'bg-purple-100 text-purple-900',
-    accent: 'bg-pink-400 text-white',
-    neutral: 'bg-slate-100 text-slate-900',
-    button: 'bg-purple-700 hover:bg-purple-800 text-white',
-    name: 'Purple Haze',
+    primary: '#D97706', // amber-600
+    secondary: '#059669', // emerald-600
+    accent: '#7C3AED', // violet-600
+    background: '#FFFBEB', // amber-50
+    text: '#4B5563', // gray-600
   },
+  // Soft pastels
   {
-    primary: 'bg-emerald-600 text-white',
-    secondary: 'bg-emerald-100 text-emerald-900',
-    accent: 'bg-yellow-400 text-emerald-900',
-    neutral: 'bg-slate-100 text-slate-900',
-    button: 'bg-emerald-700 hover:bg-emerald-800 text-white',
-    name: 'Emerald Forest',
+    primary: '#EC4899', // pink-500
+    secondary: '#8B5CF6', // violet-500
+    accent: '#06B6D4', // cyan-500
+    background: '#FDF2F8', // pink-50
+    text: '#4B5563', // gray-600
   },
+  // Dark mode
   {
-    primary: 'bg-rose-600 text-white',
-    secondary: 'bg-rose-100 text-rose-900',
-    accent: 'bg-amber-400 text-rose-900',
-    neutral: 'bg-slate-100 text-slate-900',
-    button: 'bg-rose-700 hover:bg-rose-800 text-white',
-    name: 'Rose Garden',
+    primary: '#6EE7B7', // emerald-300
+    secondary: '#A78BFA', // violet-400
+    accent: '#F472B6', // pink-400
+    background: '#1F2937', // gray-800
+    text: '#F9FAFB', // gray-50
   },
+  // Bold and vibrant
   {
-    primary: 'bg-amber-600 text-white',
-    secondary: 'bg-amber-100 text-amber-900',
-    accent: 'bg-blue-400 text-white',
-    neutral: 'bg-slate-100 text-slate-900',
-    button: 'bg-amber-700 hover:bg-amber-800 text-white',
-    name: 'Amber Glow',
+    primary: '#EF4444', // red-500
+    secondary: '#F59E0B', // amber-500
+    accent: '#3B82F6', // blue-500
+    background: '#FFFFFF', // white
+    text: '#111827', // gray-900
   },
+  // Monochromatic blue
   {
-    primary: 'bg-slate-800 text-white',
-    secondary: 'bg-slate-200 text-slate-900',
-    accent: 'bg-cyan-400 text-slate-900',
-    neutral: 'bg-white text-slate-900',
-    button: 'bg-slate-900 hover:bg-black text-white',
-    name: 'Dark Mode',
+    primary: '#2563EB', // blue-600
+    secondary: '#60A5FA', // blue-400
+    accent: '#1E40AF', // blue-800
+    background: '#EFF6FF', // blue-50
+    text: '#1E3A8A', // blue-900
   },
-];
-
-// Random fonts
-export const fonts = [
-  'font-sans',
-  'font-serif',
-  'font-mono',
-];
-
-// Random spacing values
-export const spacingValues = [
-  'p-4 md:p-6 lg:p-8',
-  'p-6 md:p-8 lg:p-10',
-  'p-8 md:p-10 lg:p-12',
+  // Sunset
+  {
+    primary: '#F97316', // orange-500
+    secondary: '#EC4899', // pink-500
+    accent: '#8B5CF6', // violet-500
+    background: '#FFFBEB', // amber-50
+    text: '#7C2D12', // orange-900
+  },
 ];
 
 // Random layout types
-export const layoutTypes = [
-  'centered',
-  'split',
-  'asymmetric',
-  'grid',
-];
+export type LayoutType = 'centered' | 'asymmetric' | 'split' | 'fullWidth' | 'cards';
 
-// Random hero types
-export const heroTypes = [
-  'simple',
-  'with-image',
-  'with-pattern',
-  'with-video',
+// Random header types
+export type HeaderType = 'minimal' | 'centered' | 'split' | 'transparent';
+
+// Random fonts
+export type FontPair = {
+  heading: string;
+  body: string;
+};
+
+export const fontPairs: FontPair[] = [
+  { heading: 'Inter', body: 'Inter' },
+  { heading: 'Playfair Display', body: 'Inter' },
+  { heading: 'Montserrat', body: 'Roboto' },
+  { heading: 'Poppins', body: 'Inter' },
+  { heading: 'Merriweather', body: 'Inter' },
 ];
 
 // Random company names
-export const companyNames = [
-  'Quantum Dynamics',
-  'Stellar Systems',
-  'Horizon Innovation',
-  'Aurora Technologies',
-  'Fusion Solutions',
-  'Echo Enterprises',
-  'Nebula Networks',
-  'Prism Technologies',
-  'Vertex Ventures',
-  'Zenith Digital',
+export const companyNames: string[] = [
+  'Horizon',
+  'Amplitude',
+  'Nebula',
+  'Quantum',
+  'Atlas',
+  'Everest',
+  'Prism',
+  'Vertex',
+  'Lumina',
+  'Infinite',
 ];
 
-// Random feature sets
-export const features = [
+// Random taglines
+export const taglines: string[] = [
+  'Transform your digital experience',
+  'Innovate with confidence',
+  'Building tomorrow, today',
+  'Your vision, our expertise',
+  'Beyond expectations',
+  'Simplify the complex',
+  'Redefine what\'s possible',
+  'Craft, create, captivate',
+  'Excellence in every pixel',
+  'Elevate your digital presence',
+];
+
+// Random features
+export type Feature = {
+  title: string;
+  description: string;
+  icon: string;
+};
+
+export const features: Feature[] = [
   {
-    title: 'Advanced Analytics',
-    description: 'Gain valuable insights with our powerful analytics platform.',
+    title: 'Powerful Analytics',
+    description: 'Gain insights from comprehensive data analysis tools that help you make informed decisions.',
     icon: 'BarChart',
   },
   {
-    title: 'Cloud Storage',
-    description: 'Secure and scalable storage solutions for all your data needs.',
+    title: 'Secure Platform',
+    description: 'Rest easy knowing your data is protected with enterprise-grade security features.',
+    icon: 'Shield',
+  },
+  {
+    title: 'Global Reach',
+    description: 'Connect with customers worldwide through our distributed network infrastructure.',
+    icon: 'Globe',
+  },
+  {
+    title: 'Intuitive Design',
+    description: 'Experience seamless user interfaces that make complex tasks feel effortless.',
+    icon: 'Layers',
+  },
+  {
+    title: 'Cloud Integration',
+    description: 'Seamlessly connect with your existing cloud services for a unified workflow.',
     icon: 'Cloud',
   },
   {
     title: 'Smart Automation',
-    description: 'Save time and reduce errors with intelligent automation.',
+    description: 'Save time with intelligent automation tools that streamline your processes.',
     icon: 'Zap',
   },
   {
-    title: 'Global Reach',
-    description: 'Connect with customers and partners around the world.',
-    icon: 'Globe',
+    title: 'Responsive Support',
+    description: '24/7 customer service ensures you always have help when you need it.',
+    icon: 'Headphones',
   },
   {
-    title: 'Premium Support',
-    description: '24/7 support from our team of experts.',
-    icon: 'LifeBuoy',
+    title: 'Scalable Solutions',
+    description: 'Grow with confidence knowing our platform scales with your business needs.',
+    icon: 'TrendingUp',
   },
-  {
-    title: 'Robust Security',
-    description: 'Enterprise-grade security to protect your data.',
-    icon: 'Shield',
-  },
-  {
-    title: 'Mobile Integration',
-    description: 'Seamless experience across all your devices.',
-    icon: 'Smartphone',
-  },
-  {
-    title: 'AI-Powered',
-    description: 'Harness the power of artificial intelligence.',
-    icon: 'Brain',
-  },
-];
-
-// Random headlines
-export const headlines = [
-  'Transform Your Business with Our Solution',
-  'The Future of Technology is Here',
-  'Simplify, Streamline, Succeed',
-  'Innovation at Your Fingertips',
-  'Building Tomorrow\'s Solutions Today',
-  'Elevate Your Experience',
-  'Power Your Potential',
-  'Redefine What\'s Possible',
-  'The Smart Choice for Modern Business',
-  'Your Vision, Our Expertise',
-];
-
-// Random sub-headlines
-export const subheadlines = [
-  'Powerful tools to take your business to the next level.',
-  'Streamlined solutions for the modern workplace.',
-  'Cutting-edge technology that delivers real results.',
-  'Simple, elegant, and effective solutions for complex problems.',
-  'Join thousands of satisfied customers worldwide.',
-  'Designed with your needs in mind.',
-  'Experience the difference that quality makes.',
-  'Unlock your full potential with our suite of tools.',
-  'Stay ahead of the competition with our innovative platform.',
-  'Everything you need, nothing you don\'t.',
-];
-
-// Random CTAs
-export const ctas = [
-  'Get Started',
-  'Try it Free',
-  'Learn More',
-  'Sign Up Now',
-  'Request a Demo',
-  'Join Today',
-  'Explore Features',
-  'Start Your Trial',
-  'See it in Action',
-  'Discover More',
 ];
 
 // Random testimonials
-export const testimonials = [
+export type Testimonial = {
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+};
+
+export const testimonials: Testimonial[] = [
   {
-    quote: 'This product has completely revolutionized how we operate. The ROI has been incredible.',
+    quote: 'This platform completely transformed how we approach our digital strategy. The results have been remarkable.',
     author: 'Sarah Johnson',
     role: 'CEO',
     company: 'Techwave',
@@ -203,7 +192,7 @@ export const testimonials = [
     company: 'GlobalTech',
   },
   {
-    quote: 'The support team has been exceptional. They go above and beyond to ensure our success.',
+    quote: 'The customer support team went above and beyond to ensure our success. Truly impressed with the service.',
     author: 'David Kim',
     role: 'CTO',
     company: 'NextGen Solutions',
@@ -216,54 +205,55 @@ export const testimonials = [
   },
 ];
 
-// Helper function to get a random item from an array
-export function getRandomItem<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+// Random hero images from Unsplash
+export const heroImages: string[] = [
+  'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2620&q=80',
+  'https://images.unsplash.com/photo-1620121692029-d088224ddc74?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3132&q=80',
+  'https://images.unsplash.com/photo-1581089781785-603411fa81e5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80',
+  'https://images.unsplash.com/photo-1605379399642-870262d3d051?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3106&q=80',
+  'https://images.unsplash.com/photo-1516796181074-bf453fbfa3e6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2620&q=80',
+];
+
+// Random CTAs
+export const ctas: string[] = [
+  'Get Started',
+  'Start Free Trial',
+  'Learn More',
+  'Join Now',
+  'Discover',
+  'Try It Free',
+  'Book a Demo',
+  'Explore Features',
+];
+
+// Helper functions for randomization
+export function getRandomItem<T>(items: T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
 }
 
-// Function to get random items without repeating
-export function getRandomItems<T>(array: T[], count: number): T[] {
-  const shuffled = [...array].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-}
-
-// Function to generate a random number between min and max
 export function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Function to generate a random website data
-export function generateRandomWebsite() {
-  const colorScheme = getRandomItem(colorSchemes);
-  const font = getRandomItem(fonts);
-  const spacing = getRandomItem(spacingValues);
-  const layout = getRandomItem(layoutTypes);
-  const heroType = getRandomItem(heroTypes);
-  const companyName = getRandomItem(companyNames);
-  const headline = getRandomItem(headlines);
-  const subheadline = getRandomItem(subheadlines);
-  const cta = getRandomItem(ctas);
-  const featureList = getRandomItems(features, getRandomNumber(3, 6));
-  
-  return {
-    colorScheme,
-    font,
-    spacing,
-    layout,
-    heroType,
-    companyName,
-    headline,
-    subheadline,
-    cta,
-    featureList
-  };
+export function getRandomFeatures(count: number): Feature[] {
+  // Shuffle array and take first 'count' elements
+  return [...features]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, count);
 }
 
-// Function to generate a random content
+export function getRandomTestimonials(count: number): Testimonial[] {
+  // Shuffle array and take first 'count' elements
+  return [...testimonials]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, count);
+}
+
+// Generate unique content for the current page load
 export function generateRandomContent() {
   return {
-    colorPalette: getRandomItem(colorSchemes),
-    fontPair: getRandomItem(fonts),
+    colorPalette: getRandomItem(colorPalettes),
+    fontPair: getRandomItem(fontPairs),
     layout: getRandomItem<LayoutType>(['centered', 'asymmetric', 'split', 'fullWidth', 'cards']),
     headerType: getRandomItem<HeaderType>(['minimal', 'centered', 'split', 'transparent']),
     companyName: getRandomItem(companyNames),
