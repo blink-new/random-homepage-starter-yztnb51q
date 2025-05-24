@@ -232,16 +232,6 @@ export function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Function to get random features
-export function getRandomFeatures(count: number) {
-  return getRandomItems(features, count);
-}
-
-// Function to get random testimonials
-export function getRandomTestimonials(count: number) {
-  return getRandomItems(testimonials, count);
-}
-
 // Function to generate a random website data
 export function generateRandomWebsite() {
   const colorScheme = getRandomItem(colorSchemes);
@@ -253,7 +243,7 @@ export function generateRandomWebsite() {
   const headline = getRandomItem(headlines);
   const subheadline = getRandomItem(subheadlines);
   const cta = getRandomItem(ctas);
-  const featureList = getRandomFeatures(getRandomNumber(3, 6));
+  const featureList = getRandomItems(features, getRandomNumber(3, 6));
   
   return {
     colorScheme,
@@ -266,5 +256,21 @@ export function generateRandomWebsite() {
     subheadline,
     cta,
     featureList
+  };
+}
+
+// Function to generate a random content
+export function generateRandomContent() {
+  return {
+    colorPalette: getRandomItem(colorSchemes),
+    fontPair: getRandomItem(fonts),
+    layout: getRandomItem<LayoutType>(['centered', 'asymmetric', 'split', 'fullWidth', 'cards']),
+    headerType: getRandomItem<HeaderType>(['minimal', 'centered', 'split', 'transparent']),
+    companyName: getRandomItem(companyNames),
+    tagline: getRandomItem(taglines),
+    heroImage: getRandomItem(heroImages),
+    cta: getRandomItem(ctas),
+    features: getRandomFeatures(getRandomNumber(3, 6)),
+    testimonials: getRandomTestimonials(getRandomNumber(1, 3)),
   };
 }
